@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.co.huntersix.spring.rest.Application;
+import uk.co.huntersix.spring.rest.model.PersonAlreadyExistException;
 import uk.co.huntersix.spring.rest.model.PersonNotFoundException;
 import uk.co.huntersix.spring.rest.model.Person;
 import uk.co.huntersix.spring.rest.referencedata.PersonDataService;
@@ -39,5 +40,25 @@ public class PersonDataServiceTest {
         List<Person> result = personDataService.findPerson("Brown");
         assertNotNull(result);
         assertEquals(2, result.size());
+    }
+
+    @Test
+    public void shouldAddPerson(){
+        Person person = new Person("Tom", "Sow");
+        Person personSaved = personDataService.addPerson(person);
+        assertNotNull(personSaved);
+        assertEquals(person,personSaved);
+
+        Person personFound = personDataService.findPerson(person.getLastName(), person.getFirstName());
+        assertNotNull(personFound);
+        assertEquals(person,personFound);
+
+    }
+
+    @Test(expected= PersonAlreadyExistException.class)
+    public void shouldFailForExistingEntity() {
+        Person person = new Person("Tom", "Sow");
+        personDataService.addPerson(person);
+        personDataService.addPerson(person);
     }
 }

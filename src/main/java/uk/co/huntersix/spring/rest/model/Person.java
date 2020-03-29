@@ -42,4 +42,9 @@ public class Person {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public Person initId(){
+        if(this.id == null) this.id = counter.incrementAndGet();
+        return this;
+    }
 }
