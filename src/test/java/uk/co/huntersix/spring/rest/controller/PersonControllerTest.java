@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.co.huntersix.spring.rest.model.Person;
+import uk.co.huntersix.spring.rest.model.PersonNotFoundException;
 import uk.co.huntersix.spring.rest.referencedata.PersonDataService;
 
 @RunWith(SpringRunner.class)
@@ -35,5 +36,15 @@ public class PersonControllerTest {
             .andExpect(jsonPath("id").exists())
             .andExpect(jsonPath("firstName").value("Mary"))
             .andExpect(jsonPath("lastName").value("Smith"));
+    }
+
+
+    @Test
+    public void shouldReturnNotFoundWhenPersonNotFound() throws Exception {
+        when(personDataService.findPerson(any(), any())).thenThrow(PersonNotFoundException.class);
+        this.mockMvc.perform(get("/person/john/doe"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(status().reason("Person not found"));
     }
 }
