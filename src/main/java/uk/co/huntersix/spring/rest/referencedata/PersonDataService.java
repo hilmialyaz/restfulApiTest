@@ -43,4 +43,12 @@ public class PersonDataService {
         PERSON_DATA.add(p.initId());
         return p;
     }
+
+    public Person updatePerson( Long id , String firstName) {
+        Person person = PERSON_DATA.stream().filter(x -> id.equals(x.getId()))
+                .findFirst()
+                .orElseThrow(PersonNotFoundException::new);
+        person.setFirstName(firstName);
+        return person;
+    }
 }

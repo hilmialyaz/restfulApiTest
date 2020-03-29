@@ -31,4 +31,12 @@ public class PersonController {
     public Person add(@RequestBody Person p) {
         return personDataService.addPerson(p);
     }
+
+    @PutMapping("/person")
+    public Person update( @RequestBody Person p) {
+        return personDataService.updatePerson(p.getId(),p.getFirstName());
+    }
+
+
+
 }

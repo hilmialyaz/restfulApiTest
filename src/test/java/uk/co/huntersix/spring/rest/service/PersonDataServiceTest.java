@@ -61,4 +61,25 @@ public class PersonDataServiceTest {
         personDataService.addPerson(person);
         personDataService.addPerson(person);
     }
+
+
+    @Test
+    public void shouldUpdatePersonFirstName(){
+        Person person = new Person("Tom", "Sow");
+        Person personSaved = personDataService.addPerson(person);
+
+        Person personUpdated = personDataService.updatePerson(personSaved.getId(), "SowV2");
+        assertNotNull(personUpdated);
+        assertEquals(personSaved.getId(),personUpdated.getId());
+        assertEquals("SowV2",personUpdated.getFirstName());
+
+        Person personFound = personDataService.findPerson(personUpdated.getLastName(), personUpdated.getFirstName());
+        assertNotNull(personFound);
+        assertEquals(personUpdated,personFound);
+    }
+
+    @Test(expected = PersonNotFoundException.class)
+    public void shouldThrowPersonNotFoundWhileUpdatingFirstName() {
+        personDataService.updatePerson(-1l, "test2");
+    }
 }

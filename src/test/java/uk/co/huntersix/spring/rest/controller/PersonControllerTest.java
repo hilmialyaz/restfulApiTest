@@ -3,8 +3,7 @@ package uk.co.huntersix.spring.rest.controller;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -131,5 +130,34 @@ public class PersonControllerTest {
                 .andExpect(status().reason("Person already exists"));
 
     }
+
+
+    @Test
+    public void shouldUpdateFirstNameOfPerson() throws Exception {
+        String jsonBody = "{ \"id\": 1, \"firstName\":\"Marvel\"}";
+
+        when(personDataService.updatePerson(1l,"Marvel")).thenReturn(new Person("Marvel", "Smith") );
+
+        this.mockMvc.perform(put("/person").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("firstName").value("Marvel"))
+                .andExpect(jsonPath("lastName").value("Smith"));
+
+    }
+
+
+    @Test
+    public void shouldReturnNotFoundIfPersonNotExist() throws Exception {
+        String jsonBody = "{ \"id\": -21, \"firstName\":\"Marvel\"}";
+        when(personDataService.updatePerson(-21l,"Marvel")).thenThrow(PersonNotFoundException.class);
+
+        this.mockMvc.perform(put("/person").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonBody))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(status().reason("Person not found"));
+    }
+
 
 }
